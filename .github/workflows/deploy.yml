@@ -1,0 +1,32 @@
+name: Deploy Server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Get current date
+            id: date
+            run: echo "::set-output name=date::$(date +'%Y-%m-%d %H:%M:%S')"
+            
+          - name: send telegram message on push
+            uses: appleboy/telegram-action@master
+            with:
+              to: ${{ secrets.TELEGRAM_TO }}
+              token: ${{ secrets.TELEGRAM_TOKEN }}
+              message: |
+                📝 ${{ github.actor }} commited 
+    
+                💬 ${{ github.event.commits[0].message }}
+    
+                📒 Repository: ${{ github.repository }}
+    
+                🕐 Deploy #${{ github.run_number }}
+    
+                👀 See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+    
+                📅 Date: ${{ steps.date.outputs.date }}
